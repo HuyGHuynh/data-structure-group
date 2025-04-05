@@ -1,6 +1,5 @@
-//package Question1;
+package question1;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class CircularList<E> implements Iterable<E> {
@@ -13,21 +12,19 @@ public class CircularList<E> implements Iterable<E> {
     }
 
     public void add(E item) {
+    	// Create a new Node
         Node<E> newNode = new Node<>(item);
 
-        if (size == 0) {
+        if (size == 0) { // If the list is empty, point the current to the newNode
             current = newNode;
             current.next = current;
-        } else {
-            Node<E> temp = current;
-            while (temp.next != current) {
-                temp = temp.next;
-            }
-            temp.next = newNode;
-            newNode.next = current; 
-            current = newNode; 
+        } else { // Link newNode to next node in the list, update next pointer of current, and update current node
+            newNode.next = current.next;
+            current.next = newNode;
+            current = newNode;
         }
-
+        
+        // Increase list size by 1
         size++;
     }
 
@@ -45,6 +42,23 @@ public class CircularList<E> implements Iterable<E> {
     public Iterator<E> iterator() {
     	CircIterator iterator = new CircIterator();
         return iterator;
+    }
+    
+    /** Helper function to print circular linked list.
+     * Stop at predecessor of current node to prevent infinite loop
+     *
+     */
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	Node<E> temp = current;
+    	for(int i = 0; i < this.size; i++) {
+    		
+    		sb.append(temp.data + " ");
+    		temp = temp.next;
+    	}
+    	
+    	return sb.toString().trim();
     }
 
     private class Node<E> {
@@ -94,6 +108,8 @@ public class CircularList<E> implements Iterable<E> {
 
             if (size == 1) {
                 current = null;
+                next = null;
+                previous = null;
             } else {
                 Node<E> temp = current;
                 while (temp.next != previous) {
@@ -120,25 +136,25 @@ public class CircularList<E> implements Iterable<E> {
 
         System.out.println("List size: " + list.size());  // Should print 3
         System.out.println("Current: " + list.get());  // Should print 3
-
-        Iterator<Integer> it = list.iterator();
-        while (it.hasNext()) {
-            System.out.println(it.next());
-        }
-
-        it = list.iterator();  
-        while (it.hasNext()) {
-            int value = it.next();
-            if (value == 2) {
-                it.remove();  
-            }
-        }
-
-        System.out.println("List size after removal: " + list.size());  // Should print 2
-        it = list.iterator();
-        while (it.hasNext()) {
-            System.out.println(it.next());
-        }
+//
+//        Iterator<Integer> it = list.iterator();
+//        while (it.hasNext()) {
+//            System.out.println(it.next());
+//        }
+//
+//        it = list.iterator();  
+//        while (it.hasNext()) {
+//            int value = it.next();
+//            if (value == 2) {
+//                it.remove();  
+//            }
+//        }
+//
+//        System.out.println("List size after removal: " + list.size());  // Should print 2
+//        it = list.iterator();
+//        while (it.hasNext()) {
+//            System.out.println(it.next());
+//        }
     
     }
 }
