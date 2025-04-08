@@ -1,5 +1,6 @@
 package question1;
 
+
 import java.util.NoSuchElementException;
 
 public class CircularList<E> implements Iterable<E> {
@@ -90,7 +91,10 @@ public class CircularList<E> implements Iterable<E> {
         @Override
         public E next() {
             if (!hasNext()) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("No element in list");
+            }
+            if(next == null) {
+            	next = current;
             }
 
             E data = next.data;
