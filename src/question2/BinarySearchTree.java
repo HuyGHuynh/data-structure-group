@@ -1,6 +1,8 @@
 package question2;
 
-public class BinarySearchTree <E extends Comparable <E>> {
+public class BinarySearchTree <E extends Comparable <E>> 
+								 extends BinaryTree<E>
+{
 	//Need to implement
 	public E find(E target) {
 		return null;
