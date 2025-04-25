@@ -1,0 +1,93 @@
+package Question2;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class IndexTree {
+	BinarySearchTree<Word> index;
+
+	public IndexTree(String filename) {
+		index = new BinarySearchTree<>();
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+			String line;
+			int lineNumber = 1;
+
+			while ((line = reader.readLine()) != null) {
+				String[] words = line.split("\\s+");
+				for (String word : words) {
+					// Extra credit: clean the word
+					word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
+					if (!word.isEmpty()) {
+						addRecord(word, lineNumber);
+					}
+				}
+				lineNumber++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void addRecord(String w, int line) {
+	    Word word = new Word(w, line);
+
+	    if (index.contains(word)) {
+	        Word existingWord = index.find(word);
+	        existingWord.addOccurrence(line);
+	    } else {
+	        index.add(word);
+	    }
+	}
+
+	public void printIndex() {
+
+	}
+
+	private class Word implements Comparable<Word> {
+		private String w;
+		private int count;
+		private ArrayList<Integer> lines;
+
+		public Word(String w, int line) {
+			this.w = w;
+			count = 1;
+			lines = new ArrayList<>();
+			lines.add(line);
+		}
+
+		void addOccurrence(int line) {
+			boolean duplicateLine = false;
+			for (int i = 0; i < lines.size(); i++) {
+				if (lines.get(i) == line) {
+					duplicateLine = true;
+				}
+			}
+			if (!duplicateLine) {
+				lines.add(line);
+			}
+			count++;
+		}
+
+		public String toString() {
+			String toString = w + " (" + count + "): ";
+			StringBuilder sb = new StringBuilder(toString);
+
+			for (int i = 0; i < lines.size(); i++) {
+				sb.append(lines.get(i));
+				if (i < lines.size() - 1) {
+					sb.append(", ");
+				}
+			}
+
+			return sb.toString();
+		}
+
+		public int compareTo(Word o) {
+			int compareWord = w.compareTo(o.w);
+			return compareWord;
+		}
+	}
+}
