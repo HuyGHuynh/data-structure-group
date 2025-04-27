@@ -2,6 +2,10 @@ package question3;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class KnowledgeGraph {
 	BinarySearchTree<EntityNode> graph;
@@ -9,6 +13,31 @@ public class KnowledgeGraph {
 	public KnowledgeGraph(String filename) {
 		//convert .xlsx file to graph data (later on)
 		graph = new BinarySearchTree<>();
+		
+		//read Excel file input
+        try (FileInputStream fis = new FileInputStream(filename);
+                Workbook workbook = new XSSFWorkbook(fis)) {
+
+               Sheet sheet = workbook.getSheetAt(0); // Read first sheet
+               for (Row row : sheet) {
+                   // Skip empty or header rows if needed
+                   if (row.getRowNum() == 0) continue;  // Skip first row if it's a header
+
+                   Cell cellEntity1 = row.getCell(1);
+                   Cell cellRelation = row.getCell(2);
+                   Cell cellEntity2 = row.getCell(4);
+
+                   if (cellEntity1 != null && cellRelation != null && cellEntity2 != null) {
+                       String entity1 = cellEntity1.toString().trim();
+                       String relation = cellRelation.toString().trim();
+                       String entity2 = cellEntity2.toString().trim();
+
+                       addTriplet(entity1, relation, entity2);
+                   }
+               }
+           } catch (IOException e) {
+               System.out.println("Error reading Excel file: " + e.getMessage());
+           }
 	}
 	
 	public void addTriplet(String entity1, String relation, String entity2) {
