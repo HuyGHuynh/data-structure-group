@@ -3,12 +3,17 @@ package question3;
 import java.util.LinkedList;
 import java.util.List;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class KnowledgeGraph {
 	BinarySearchTree<EntityNode> graph;
+	
+	public KnowledgeGraph() {
+		graph = new BinarySearchTree<>();
+	}
 	
 	public KnowledgeGraph(String filename) {
 		//convert .xlsx file to graph data (later on)
@@ -64,27 +69,33 @@ public class KnowledgeGraph {
 		}
 	}
 	
-	public void associatedRelation(String entity1) {
+	public KnowledgeGraph associatedRelation(String entity1) {
+		KnowledgeGraph subGraph = new KnowledgeGraph();
 		EntityNode node = new EntityNode(entity1);
 		// Get reference node for queries
 		EntityNode refNode = graph.find(node);
 		if(refNode != null) {
-			System.out.println(refNode.entity1 + " relations:");
+			EntityNode newNode = new EntityNode(refNode.entity1);
 			for(RelationEdge edge : refNode.edges) {
 				String relation = edge.relation;
 				String entity2 = edge.entity2;
-				System.out.println(relation + " -> " + entity2);
+				newNode.edges.add(new RelationEdge(relation, entity2));
 			}
+			subGraph.graph.add(newNode);
 		} else {
 			System.out.println("Entity not found");
 		}
+		
+		return subGraph;
 	}
 	
-	public void findEntityPair(String relation) {
-		findEntityPair(graph.root, relation);
+	public KnowledgeGraph findEntityPair(String relation) {
+		KnowledgeGraph subGraph = new KnowledgeGraph();
+		findEntityPair(graph.root, relation, subGraph);
+		return subGraph;
 	}
 	
-	private void findEntityPair(BinaryTree.Node<EntityNode> localRoot, String relation) {
+	private void findEntityPair(BinaryTree.Node<EntityNode> localRoot, String relation, KnowledgeGraph subGraph) {
 		//Perform inorder traversal
 		//At each EntityNode visit, find matching "relation" in "edges" linked list
 		
@@ -93,42 +104,95 @@ public class KnowledgeGraph {
 			return;
 		}
 		
-		findEntityPair(localRoot.left, relation);
+		findEntityPair(localRoot.left, relation, subGraph);
 		
 		EntityNode currentNode = localRoot.data;
+		EntityNode newNode = null;
 		for(RelationEdge edge : currentNode.edges) {
 			if(edge.relation.equals(relation)) {
 				String entity1 = currentNode.entity1;
 				String entity2 = edge.entity2;
-				System.out.println(entity1 + " -> " + relation + " -> " + entity2);
+				if(newNode == null) {
+					newNode = new EntityNode(entity1);
+				}
+				newNode.edges.add(new RelationEdge(edge.relation, entity2));
 			}
 		}
 		
-		findEntityPair(localRoot.right, relation);
+	    if (newNode != null) {
+	        subGraph.graph.add(newNode);
+	    }
+		
+		findEntityPair(localRoot.right, relation, subGraph);
 		
 	}
 	
-	public void findEntity(String entity1, String relation) {
+	public KnowledgeGraph findEntity(String entity1, String relation) {
+		KnowledgeGraph subGraph = new KnowledgeGraph();
 		EntityNode node = new EntityNode(entity1);
 		// Get reference node for queries
 		EntityNode refNode = graph.find(node);
 		if(refNode != null) {
+			EntityNode newNode = new EntityNode(refNode.entity1);
 			boolean found = false;
 			for(RelationEdge edge : refNode.edges) {
 				if(edge.relation.equals(relation)) {
 					String entity2 = edge.entity2;
-					System.out.println(entity1 + " -> " + relation + " -> " + entity2);
+					newNode.edges.add(new RelationEdge(edge.relation, entity2));
 					found = true;
 				}
 				
 			}
+			if (found) {
+	            subGraph.graph.add(newNode);
+	        }
 			if(!found) {
 				System.out.println("Relation not found");
 			}
 		} else {
 			System.out.println("Entity not found");
 		}
+		
+		return subGraph;
 	}
+	
+	public void exportFullGraph(String dotFileName, String pngFileName) {
+        try (FileWriter fw = new FileWriter(dotFileName)) {
+            fw.write("digraph KnowledgeGraph {\n");
+            fw.write("rankdir=TB;\n"); //Top-bottom hierarchy
+            fw.write("nodesep=0.5;\n"); //Horizontal scale
+            fw.write("ranksep=5;\n"); //Vertical scale
+            exportRecursive(this.graph.root, fw);
+            fw.write("}\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        generatePng(dotFileName, pngFileName);
+    }
+	
+	private void exportRecursive(BinaryTree.Node<EntityNode> node, FileWriter fw) throws IOException {
+        if (node == null) return;
+
+        exportRecursive(node.left, fw);
+
+        if (node.data != null) {
+            for (RelationEdge edge : node.data.edges) {
+                fw.write("  \"" + node.data.entity1 + "\" -> \"" + edge.entity2 + "\" [label=\"" + edge.relation + "\"];\n");
+            }
+        }
+
+        exportRecursive(node.right, fw);
+    }
+
+    private void generatePng(String dotFileName, String pngFileName) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFileName, "-o", pngFileName);
+            pb.start().waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	private class EntityNode implements Comparable<EntityNode>{
 		String entity1;

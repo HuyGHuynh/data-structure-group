@@ -1,0 +1,22 @@
+digraph KnowledgeGraph {
+rankdir=TB;
+nodesep=0.5;
+ranksep=5;
+  "Alzheimer's Disease" -> "Patients" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Persons" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Participant" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Adult" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Elderly" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Individual" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Animal Model" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "nursing home resident" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "African American" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Outpatients" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Woman" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Caregiver" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Family member" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Rodent Model" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Rodent" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Relative (related person)" [label="PROCESS_OF"];
+  "Alzheimer's Disease" -> "Control Groups" [label="PROCESS_OF"];
+}
