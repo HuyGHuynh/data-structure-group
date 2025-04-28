@@ -69,8 +69,8 @@ public class KnowledgeGraphGUI {
                     KnowledgeGraph subGraph = kg.associatedRelation(entityInput);
 
                     if (subGraph != null) {
-                        subGraph.exportFullGraph("mini.dot", "mini.png");
-                        openGraphImage("mini.png");
+                        subGraph.exportFullGraph("mini.dot", "mini.svg");
+                        openGraphImage("mini.svg");
                     } else {
                         outputArea.append("Entity not found.\n");
                     }
@@ -94,8 +94,8 @@ public class KnowledgeGraphGUI {
                     KnowledgeGraph subGraph = kg.findEntityPair(relationInput);
 
                     if (subGraph != null) {
-                    	subGraph.exportFullGraph("mini.dot", "mini.png");
-                        openGraphImage("mini.png");
+                    	subGraph.exportFullGraph("mini.dot", "mini.svg");
+                        openGraphImage("mini.svg");
                     } else {
                         outputArea.append("Relation not found.\n");
                     }
@@ -120,8 +120,8 @@ public class KnowledgeGraphGUI {
                     KnowledgeGraph subGraph = kg.findEntity(entityInput, relationInput);
 
                     if (subGraph != null) {
-                    	subGraph.exportFullGraph("mini.dot", "mini.png");
-                        openGraphImage("mini.png");
+                    	subGraph.exportFullGraph("mini.dot", "mini.svg");
+                        openGraphImage("mini.svg");
                     } else {
                         outputArea.append("No match found.\n");
                     }

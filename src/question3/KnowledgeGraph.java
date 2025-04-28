@@ -168,7 +168,7 @@ public class KnowledgeGraph {
             e.printStackTrace();
         }
 
-        generatePng(dotFileName, pngFileName);
+        generateSvg(dotFileName, pngFileName);
     }
 	
 	private void exportRecursive(BinaryTree.Node<EntityNode> node, FileWriter fw) throws IOException {
@@ -185,9 +185,9 @@ public class KnowledgeGraph {
         exportRecursive(node.right, fw);
     }
 
-    private void generatePng(String dotFileName, String pngFileName) {
+    private void generateSvg(String dotFileName, String pngFileName) {
         try {
-            ProcessBuilder pb = new ProcessBuilder("dot", "-Tpng", dotFileName, "-o", pngFileName);
+            ProcessBuilder pb = new ProcessBuilder("dot", "-Tsvg", dotFileName, "-o", pngFileName);
             pb.start().waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
